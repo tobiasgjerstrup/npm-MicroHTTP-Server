@@ -13,7 +13,7 @@ function createApp() {
 
   function listen(port: number, hostnameOrCallback: string | (() => void), callback?: () => void) {
     const server = http.createServer((req, res) => {
-      const route = matchRoute(req.method as 'GET' | 'POST' | 'PUT' | 'DELETE', req.url || '');
+      const route = matchRoute(req.method as 'GET' | 'POST' | 'PUT' | 'DELETE', req.url ?? '');
 
       if (route) {
         route.handler(req, res);
@@ -31,10 +31,18 @@ function createApp() {
   }
 
   return {
-    get: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => addRoute('GET', path, handler),
-    post: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => addRoute('POST', path, handler),
-    put: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => addRoute('PUT', path, handler),
-    delete: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => addRoute('DELETE', path, handler),
+    get: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+      addRoute('GET', path, handler);
+    },
+    post: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+      addRoute('POST', path, handler);
+    },
+    put: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+      addRoute('PUT', path, handler);
+    },
+    delete: (path: string, handler: (req: http.IncomingMessage, res: http.ServerResponse) => void) => {
+      addRoute('DELETE', path, handler);
+    },
     listen
   };
 }
