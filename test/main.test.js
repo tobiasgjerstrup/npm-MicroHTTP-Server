@@ -1,13 +1,11 @@
 import { afterAll, beforeAll, describe, it, expect } from 'vitest';
 
-beforeAll(async () => {
-});
+beforeAll(async () => {});
 
-afterAll(async () => {
-});
+afterAll(async () => {});
 
 describe('main', () => {
-  it('should work', async () => {
-    expect(1).toBe(1);
-  });
+    it('should work', async () => {
+        expect(1).toBe(1);
+    });
 });
