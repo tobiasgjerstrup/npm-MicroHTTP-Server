@@ -24,16 +24,18 @@ function createApp() {
             const route = matchRoute(req.method as 'GET' | 'POST' | 'PUT' | 'DELETE', req.url ?? '');
 
             let body = '';
-            req.on('data', (chunk) => {
+            req.on('data', (chunk: string) => {
                 body += chunk;
             });
 
             req.on('end', () => {
-                const contentType = String(req.headers['content-type'] ?? '').toLowerCase();
+                const contentType = (req.headers['content-type'] ?? '').toLowerCase();
                 if (contentType.includes('application/json')) {
                     try {
                         console.log('Parsing JSON body:', body);
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
                         (req as any).body = JSON.parse(body);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
                         console.log('Parsed JSON body:', (req as any).body);
                     } catch (e) {
                         console.log('Failed to parse JSON body:', e);
