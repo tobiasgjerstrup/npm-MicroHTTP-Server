@@ -23,12 +23,33 @@ function createApp() {
         const server = http.createServer((req, res) => {
             const route = matchRoute(req.method as 'GET' | 'POST' | 'PUT' | 'DELETE', req.url ?? '');
 
-            if (route) {
-                route.handler(req, res);
-            } else {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                res.end('Not found');
-            }
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk;
+            });
+
+            req.on('end', () => {
+                const contentType = String(req.headers['content-type'] ?? '').toLowerCase();
+                if (contentType.includes('application/json')) {
+                    try {
+                        console.log('Parsing JSON body:', body);
+                        (req as any).body = JSON.parse(body);
+                        console.log('Parsed JSON body:', (req as any).body);
+                    } catch (e) {
+                        console.log('Failed to parse JSON body:', e);
+                        res.writeHead(400, { 'Content-Type': 'text/plain' });
+                        res.end('Invalid JSON');
+                        return;
+                    }
+                }
+
+                if (route) {
+                    route.handler(req, res);
+                } else {
+                    res.writeHead(404, { 'Content-Type': 'text/plain' });
+                    res.end('Not found');
+                }
+            });
         });
 
         if (typeof hostnameOrCallback === 'function') {
