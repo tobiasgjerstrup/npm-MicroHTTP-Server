@@ -1,51 +1,53 @@
 {
-  "name": "@tobiasgjerstrup/microhttp-server",
-  "version": "1.1.0",
-  "description": "A small wrapper for nodejs' http server",
-  "homepage": "https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server#readme",
-  "bugs": {
-    "url": "https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server.git"
-  },
-  "license": "ISC",
-  "author": "Tobias Gjerstrup",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+    "name": "@tobiasgjerstrup/microhttp-server",
+    "version": "1.1.0",
+    "description": "A small wrapper for nodejs' http server",
+    "homepage": "https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server#readme",
+    "bugs": {
+        "url": "https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tobiasgjerstrup/npm-MicroHTTP-Server.git"
+    },
+    "license": "ISC",
+    "author": "Tobias Gjerstrup",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "package.json",
+        "README.md",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "start": "cd playground && npm start",
+        "lint": "eslint . --max-warnings=0",
+        "test": "vitest run",
+        "test:serve": "vitest",
+        "format": "prettier --write .",
+        "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc",
+        "prepublishOnly": "npm run build && npm run lint && npm run test"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@tobiasgjerstrup/microhttp": "^1.0.0",
+        "@types/node": "^25.5.0",
+        "eslint": "^10.1.0",
+        "globals": "^17.4.0",
+        "jiti": "^2.6.1",
+        "typescript": "~6.0.0",
+        "typescript-eslint": "^8.58.0",
+        "vitest": "^4.1.1"
     }
-  },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md",
-    "LICENSE"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "start": "cd playground && npm start",
-    "lint": "eslint . --max-warnings=0",
-    "test": "vitest",
-    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc",
-    "prepublishOnly": "npm run build && npm run lint && npm run test"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@tobiasgjerstrup/microhttp": "^1.0.0",
-    "@types/node": "^25.5.0",
-    "eslint": "^10.1.0",
-    "globals": "^17.4.0",
-    "jiti": "^2.6.1",
-    "typescript": "~6.0.0",
-    "typescript-eslint": "^8.58.0",
-    "vitest": "^4.1.1"
-  }
 }
