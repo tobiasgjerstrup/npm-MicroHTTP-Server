@@ -1,5 +1,21 @@
 import http from 'node:http';
 
+function getRequestContentType(header: string | string[] | undefined) {
+    const raw = Array.isArray(header) ? header[0] : (header ?? '');
+    return raw.toLowerCase().split(';')[0].trim();
+}
+
+function parseJsonBody(body: string): unknown {
+    let parsed: unknown = JSON.parse(body);
+
+    // Some clients may stringify payloads more than once. Parse once more if needed.
+    if (typeof parsed === 'string') {
+        parsed = JSON.parse(parsed);
+    }
+
+    return parsed;
+}
+
 function createApp() {
     const routes: {
         method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -29,16 +45,12 @@ function createApp() {
             });
 
             req.on('end', () => {
-                const contentType = (req.headers['content-type'] ?? '').toLowerCase();
-                if (contentType.includes('application/json')) {
+                const contentType = getRequestContentType(req.headers['content-type']);
+                if (contentType === 'application/json') {
                     try {
-                        console.log('Parsing JSON body:', body);
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-                        (req as any).body = JSON.parse(body);
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-                        console.log('Parsed JSON body:', (req as any).body);
-                    } catch (e) {
-                        console.log('Failed to parse JSON body:', e);
+                        (req as any).body = parseJsonBody(body);
+                    } catch {
                         res.writeHead(400, { 'Content-Type': 'text/plain' });
                         res.end('Invalid JSON');
                         return;
