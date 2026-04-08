@@ -8,7 +8,7 @@ function getRequestContentType(header: string | string[] | undefined) {
 function parseJsonBody(body: string): unknown {
     let parsed: unknown = JSON.parse(body);
 
-    // Some clients may stringify payloads more than once. Parse once more if needed.
+    // Some clients may stringify payloads more than once. Parse once more if needed.>
     if (typeof parsed === 'string') {
         parsed = JSON.parse(parsed);
     }
@@ -69,7 +69,7 @@ function createApp() {
                 }
 
                 if (contentType === 'text/plain') {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
                     (req as any).body = body;
                 }
 
