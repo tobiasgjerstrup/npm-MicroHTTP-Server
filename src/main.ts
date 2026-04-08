@@ -57,6 +57,22 @@ function createApp() {
                     }
                 }
 
+                if (contentType === 'application/x-www-form-urlencoded') {
+                    try {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+                        (req as any).body = new URLSearchParams(body);
+                    } catch {
+                        res.writeHead(400, { 'Content-Type': 'text/plain' });
+                        res.end('Invalid form data');
+                        return;
+                    }
+                }
+
+                if (contentType === 'text/plain') {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (req as any).body = body;
+                }
+
                 if (route) {
                     route.handler(req, res);
                 } else {

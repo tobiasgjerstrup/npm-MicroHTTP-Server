@@ -12,13 +12,26 @@ app.post('/json', (req, res) => {
 });
 
 app.post('/echo', (req, res) => {
-    // For non-JSON requests, body parsing should not run.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    res.end(req.body ? 'has-body' : 'no-body');
+    if (typeof req.body === 'string') {
+        res.end(req.body);
+        return;
+    }
+
+    res.end('no-body');
 });
 
 app.post('/json-type', (req, res) => {
     res.end(typeof req.body);
+});
+
+app.post('/form', (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(
+        JSON.stringify({
+            isUrlSearchParams: req.body instanceof URLSearchParams,
+            fields: Object.fromEntries(req.body.entries()),
+        }),
+    );
 });
 
 beforeAll(() => {
@@ -91,7 +104,27 @@ describe('JSON body parsing', () => {
         expect(body).toBe('object');
     });
 
-    it('does not parse body when content type is not JSON', async () => {
+    it('parses form-urlencoded body and passes URLSearchParams to handler', async () => {
+        const res = await fetch(`${baseUrl}/form`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            body: 'name=Alice+Smith&role=admin',
+        });
+        const body = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(body).toEqual({
+            isUrlSearchParams: true,
+            fields: {
+                name: 'Alice Smith',
+                role: 'admin',
+            },
+        });
+    });
+
+    it('parses text/plain as string', async () => {
         const res = await fetch(`${baseUrl}/echo`, {
             method: 'POST',
             headers: {
@@ -99,9 +132,8 @@ describe('JSON body parsing', () => {
             },
             body: 'plain text',
         });
-        const body = await res.text();
 
         expect(res.status).toBe(200);
-        expect(body).toBe('no-body');
+        expect(await res.text()).toBe('plain text');
     });
 });
